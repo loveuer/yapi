@@ -1,0 +1,33 @@
+services:
+  mongo:
+    image: mongo:8
+    restart: unless-stopped
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  yapi:
+    build:
+      context: ..
+      dockerfile: deployment/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      # config.json must sit at /app/config.json (two levels above server/)
+      - ./config.json:/app/config.json:ro
+      # persist init.lock (first-boot flag) and logs
+      - yapi_data:/app
+    depends_on:
+      mongo:
+        condition: service_healthy
+    environment:
+      - NODE_ENV=production
+
+volumes:
+  mongo_data:
+  yapi_data:
