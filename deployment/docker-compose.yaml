@@ -19,9 +19,8 @@ services:
       - "3000:3000"
     volumes:
       # config.json must sit at /app/config.json (two levels above server/)
+      # The yapi container is stateless – all data lives in MongoDB.
       - ./config.json:/app/config.json:ro
-      # persist init.lock (first-boot flag) and logs
-      - yapi_data:/app
     depends_on:
       mongo:
         condition: service_healthy
@@ -30,4 +29,3 @@ services:
 
 volumes:
   mongo_data:
-  yapi_data:
