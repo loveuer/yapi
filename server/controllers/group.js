@@ -134,10 +134,8 @@ class groupController extends baseController {
 
     let owners = [];
 
-    if(params.owner_uids.length === 0){
-      params.owner_uids.push(
-        this.getUid()
-      )
+    if(!params.owner_uids || params.owner_uids.length === 0){
+      params.owner_uids = [this.getUid()];
     }
 
     if (params.owner_uids) {
